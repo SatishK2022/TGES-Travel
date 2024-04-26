@@ -114,8 +114,68 @@ const login = asyncHandler(async (req, res) => {
         )
 })
 
+const logout = asyncHandler(async (req, res) => {
+    res
+        .status(200)
+        .cookie("accessToken", null, { maxAge: 0 })
+        .json(new ApiResponse(200, {}, "User Logged Out Successfully"))
+})
+
+const changePassword = asyncHandler(async (req, res) => {
+    const { oldPassword, newPassword } = req.body
+
+    if (!oldPassword || !newPassword) {
+        return res.status(400).json({
+            success: false,
+            message: "All Fields are required",
+        })
+    }
+
+    const user = await User.findById(req.user._id)
+
+    if (!user) {
+        return res.status(400).json({
+            success: false,
+            message: "User does not exist",
+        })
+    }
+
+    const isPasswordValid = await user.isPasswordCorrect(oldPassword);
+
+    if (!isPasswordValid) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid Credentials",
+        })
+    }
+
+    user.password = newPassword
+
+    await user.save()
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {},
+            "Password Changed Successfully"
+        )
+    )
+})
+
+const getCurrentUser = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+
+    const user = await User.findById(_id).select("-password")
+
+    return res.status(200).json(
+        new ApiResponse(200, user, "User fetched successfully")
+    )
+})
 
 export {
     register,
-    login
+    login,
+    logout,
+    changePassword,
+    getCurrentUser
 }
