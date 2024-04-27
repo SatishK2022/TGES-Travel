@@ -25,6 +25,22 @@ const userSchema = new Schema(
             type: String,
             required: [true, "City is Required"],
         },
+        country: {
+            type: String,
+            required: [true, "Country is Required"],
+        },
+        address: {
+            type: String,
+        },
+        phone: {
+            type: Number,
+            maxWidth: 10
+        },
+        gender: {
+            type: String,
+            enum: ["MALE", "FEMALE", "OTHER"],
+            required: [true, "Gender is Required"],
+        },
         role: {
             type: String,
             enum: ["ADMIN", "USER"],
@@ -49,8 +65,6 @@ userSchema.methods.generateAccessToken = function () {
         {
             _id: this._id,
             email: this.email,
-            username: this.username,
-            fullName: this.fullName
         },
         process.env.ACCESS_TOKEN_SECRET,
         {

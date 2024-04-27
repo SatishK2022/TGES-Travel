@@ -18,11 +18,13 @@ app.use(morgan("dev"))
 import userRouter from "./routes/user.routes.js"
 import healthcheckRouter from "./routes/healthcheck.routes.js"
 import dashboardRouter from "./routes/dashboard.routes.js"
+import travelRouter from "./routes/travel.routes.js"
 
 // routes decleration
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/healthcheck", healthcheckRouter)
 app.use("/api/v1/dashboard", dashboardRouter)
+app.use("/api/v1/travel", travelRouter)
 
 
 app.get("/", (req, res) => {

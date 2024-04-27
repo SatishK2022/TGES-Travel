@@ -20,9 +20,9 @@ const generateAccessToken = async (userId) => {
 }
 
 const register = asyncHandler(async (req, res) => {
-    const { fullName, email, city, password } = req.body
+    const { fullName, email, city, country, gender, password } = req.body
 
-    if (!fullName || !email || !city || !password) {
+    if (!fullName || !email || !city || !password || !country || !gender) {
         return res.status(400).json({
             success: false,
             message: "All Fields are required",
@@ -49,7 +49,9 @@ const register = asyncHandler(async (req, res) => {
         fullName,
         email,
         password,
-        city
+        city,
+        country,
+        gender,
     })
 
     const createdUser = await User.findById(user._id).select("-password")
@@ -172,10 +174,48 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     )
 })
 
+const updateProfile = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { country, gender, phone, address, fullName, city } = req.body;
+
+    const updateData = {
+        fullName,
+        city,
+        country,
+        gender,
+        phone,
+        address,
+    };
+
+    // Remove any undefined or null values from the updateData
+    Object.keys(updateData).forEach((key) => {
+        if (updateData[key] === undefined || updateData[key] === null) {
+            delete updateData[key];
+        }
+    });
+
+    const user = await User.findByIdAndUpdate(_id, updateData, {
+        new: true,
+        runValidators: true,
+    }).select("-password");
+
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            message: "User not found",
+        })
+    }
+
+    return res.status(200).json(
+        new ApiResponse(200, user, "User updated successfully")
+    );
+});
+
 export {
     register,
     login,
     logout,
     changePassword,
-    getCurrentUser
+    getCurrentUser,
+    updateProfile
 }
