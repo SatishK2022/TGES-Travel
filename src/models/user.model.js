@@ -24,7 +24,12 @@ const userSchema = new Schema(
         city: {
             type: String,
             required: [true, "City is Required"],
-        }
+        },
+        role: {
+            type: String,
+            enum: ["ADMIN", "USER"],
+            default: "USER"
+        },
     }, { timestamps: true, versionKey: false }
 )
 
