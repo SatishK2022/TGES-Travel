@@ -34,6 +34,20 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
     }
 })
 
+const authorizedRoles = (...roles) => (req, res, next) => {
+    const currentRole = req.user.role;
+
+    if (!roles.includes(currentRole)) {
+        return res.status(403).json({
+            success: false,
+            message: "Unauthorized access"
+        })
+    }
+
+    next();
+}
+
 export {
-    verifyJWT
+    verifyJWT,
+    authorizedRoles
 }
