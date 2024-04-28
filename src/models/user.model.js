@@ -38,7 +38,14 @@ const userSchema = new Schema(
         },
         gender: {
             type: String,
-            enum: ["MALE", "FEMALE", "OTHER"],
+            enum: [
+                "male",
+                "MALE",
+                "female",
+                "FEMALE",
+                "other",
+                "OTHER",
+            ],
             required: [true, "Gender is Required"],
         },
         role: {
@@ -50,7 +57,7 @@ const userSchema = new Schema(
 )
 
 userSchema.pre("save", async function (next) {
-    if(!this.isModified("password")) return next()
+    if (!this.isModified("password")) return next()
 
     this.password = await bcrypt.hash(this.password, 10)
     next()
