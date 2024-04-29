@@ -23,11 +23,9 @@ const userSchema = new Schema(
         },
         city: {
             type: String,
-            required: [true, "City is Required"],
         },
         country: {
             type: String,
-            required: [true, "Country is Required"],
         },
         address: {
             type: String,
@@ -46,7 +44,6 @@ const userSchema = new Schema(
                 "other",
                 "OTHER",
             ],
-            required: [true, "Gender is Required"],
         },
         role: {
             type: String,
@@ -64,8 +61,9 @@ userSchema.pre("save", async function (next) {
 })
 
 userSchema.methods.isPasswordCorrect = async function (password) {
+    console.log("Password: ", password)
     return await bcrypt.compare(password, this.password)
-}
+};
 
 userSchema.methods.generateAccessToken = function () {
     return jwt.sign(
